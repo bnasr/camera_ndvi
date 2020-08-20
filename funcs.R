@@ -47,9 +47,10 @@ get_ndvi <- function(roi_name,
               by = 'key_code')
   
   colnames(dt) <- c('key_code', 'datetime', 'solar_elev', 'exposure_rgb', 'r', 'g', 'b', 'ir', 'exposure_ir')
-  
+
+    
   dt$key_code <- NULL
-  dt <- dt[solar_elev<5]
+  dt <- dt[solar_elev>solar_elev_threshold]
   
   dt[, Y := 0.3 * r + 0.59 * g + 0.11 * b]
   dt[, Z_prime := ir / sqrt(exposure_ir)]
