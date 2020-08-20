@@ -1,7 +1,7 @@
 get_ndvi <- function(roi_name, 
                      cache = TRUE, 
                      solar_elev_threshold = 5, 
-                     qtl = '50',
+                     qtl = 'mean',
                      lag_threshold_sec = 600){
   
   roi_name_parsed <- strsplit(roi_name, split = '_')[[1]]
