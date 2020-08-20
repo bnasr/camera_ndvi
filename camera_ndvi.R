@@ -90,6 +90,8 @@ for(i in 1:n){
   site <- ir_rois[i, site]
   roi_name <- ir_rois[i, roi_name]
   
+  cat(roi_name, '\n')
+  
   ndvi_stats <- get_ndvi(roi_name, cache = TRUE, qtl = 'mean')
   
   ndvi_stats[, year := year(datetime)]
