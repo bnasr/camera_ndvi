@@ -44,7 +44,7 @@ for(i in 1:n){
   
   cat(roi_name, '\n')
   
-  ndvi_stats <- try(get_ndvi(roi_name, cache = TRUE, qtl = '50'))
+  ndvi_stats <- try(get_ndvi(roi_name, cache = TRUE, qtl = '10'))
   
   if(class(ndvi_stats)[1]=='try-error') next()
   if(nrow(ndvi_stats)==0) next()
