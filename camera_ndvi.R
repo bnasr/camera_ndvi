@@ -42,7 +42,7 @@ for(qtl in c('5', '10', '25', '50', '75', '90', '95', 'mean')){
     site <- ir_rois[i, site]
     roi_name <- ir_rois[i, roi_name]
     
-    cat(roi_name, '\n')
+    cat(roi_name, qtl, '\n')
     
     ndvi_stats <- try(get_ndvi(roi_name, cache = TRUE, qtl = qtl))
     
@@ -81,6 +81,7 @@ for(qtl in c('5', '10', '25', '50', '75', '90', '95', 'mean')){
     
     x <- try({
       modis <- fread(paste0(modis_data_dir, site, '_gee_subset.csv'))
+      modis[, date:=as.Date(date)]
       modis[, ndvi := (Nadir_Reflectance_Band2 - Nadir_Reflectance_Band1) /
               (Nadir_Reflectance_Band2 + Nadir_Reflectance_Band1)]
       
@@ -106,29 +107,34 @@ for(qtl in c('5', '10', '25', '50', '75', '90', '95', 'mean')){
     
     
     
-    svg(filename = paste0(figs_data_dir, roi_name, '_', qtl,'.svg'), width = 8, height = 6)
+    # svg(filename = paste0(figs_data_dir, roi_name, '_', ifelse(qtl=='5','05',qtl),'.svg'), width = 8, height = 6)
+    png(filename = paste0(figs_data_dir, roi_name, '_', ifelse(qtl=='5','05',qtl),'.png'), width = 8, height = 6, units = 'in', res = 600)
     layout(matrix(1:8, 4,2, byrow = T), widths = c(5,3))
     par(mar=c(0,4,1,6), oma = c(3,0,2,0))
     
     xlim <- range(gcc_d3$date)
     
     for(metric in c('mean', '50', '75', '90')){
-      plot(gcc_d3$date, gcc_d3$gcc_90, type = 'l', col = 3, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='')
+      plot(gcc_d3$date, gcc_d3$gcc_90, type = 'l', col = 3, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='', lwd =2)
       axis(2, line = 1, col = 3, col.ticks = 3, col.axis = 3)
       
       par(new = T)
       plot(ndvi_d3$date, ndvi_d3[[paste0('ndvi_',metric)]], type = 'l', col = 1, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='')
-      axis(4, line = 3, col = 1, col.ticks = 1, col.axis = 1)
+      axis(4, line = 1, col = 1, col.ticks = 1, col.axis = 1)
       
       par(new = T)
       plot(ndvi_d3$date, ndvi_d3[[paste0('evi2_',metric)]], type = 'l', col = 4, lty=2, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='')
-      axis(4, line = 6, col = 4, col.ticks = 4, col.axis = 4)
+      axis(4, line = 4, col = 4, col.ticks = 4, col.axis = 4)
+      
+      par(new = T)
+      plot(modis$date, modis$ndvi, type = 'l', col = 2, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='')
+      axis(4, line = 7, col = 2, col.ticks = 2, col.axis = 2)
       
       plot(type='n', 1, 1, axes =F, xlab ='', ylab='')
-      legend('center', legend = c('Gcc-90', paste0(c('NDVI-', 'EVI2-'), metric)), bty= 'n', col = c(3,1,4), lty = c(1,1,2))
+      legend('center', legend = c('Gcc-90', paste0(c('NDVI-', 'EVI2-'), metric), 'MODIS-NDVI'), bty= 'n', col = c(3,1,4,2), lty = c(1,1,2,1))
     }
     
-    mtext(outer = T, text = roi_name)
+    mtext(outer = T, text = paste(roi_name, qtl))
     dev.off()
   }
   
