@@ -76,12 +76,16 @@ get_ndvi <- function(roi_name,
 
 
 
-phenos <- get_phenos()
-rois <- get_rois()
+# phenos <- get_phenos()
+# rois <- get_rois()
+# ir_rois <- rois[site %in% phenos[infrared=='Y', site]]
+# ir_rois[, ir_url := paste0(phenocam_url, site, '/ROI/', roi_name, '_IR_roistats.csv')]
+# w = mapply(FUN = url.exists, ir_rois$ir_url)
+# write.csv(ir_rois[which(as.vector(w))], row.names = FALSE, file = 'data/ir_rois.csv')
 
-ir_rois <- rois[site %in% phenos[infrared=='Y', site]]
+ir_rois <- fread('data/ir_rois.csv')
 
-i = 83
+# i = 83
 # roi_name <- 'dukehw_DB_1000'
 
 n <- nrow(ir_rois)
