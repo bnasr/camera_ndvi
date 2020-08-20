@@ -92,7 +92,9 @@ for(i in 1:n){
   
   cat(roi_name, '\n')
   
-  ndvi_stats <- get_ndvi(roi_name, cache = TRUE, qtl = 'mean')
+  ndvi_stats <- try(get_ndvi(roi_name, cache = TRUE, qtl = 'mean'))
+  
+  if(class(ndvi_stats)=='try-error') next()
   
   ndvi_stats[, year := year(datetime)]
   ndvi_stats[, d1 := yday(datetime)]
