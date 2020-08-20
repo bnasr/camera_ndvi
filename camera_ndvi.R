@@ -126,15 +126,17 @@ for(i in 1:n){
                             evi2_90 = quantile(EVI2_c, na.rm = T, probs = 0.90)),
                         .(year, doy = d3)]
   
-  modis <- fread(paste0(modis_data_dir, site, '_gee_subset.csv'))
-  modis[, ndvi := (Nadir_Reflectance_Band2 - Nadir_Reflectance_Band1) /
-          (Nadir_Reflectance_Band2 + Nadir_Reflectance_Band1)]
-  
-  modis[, evi := 2.5 * (Nadir_Reflectance_Band2 - Nadir_Reflectance_Band1) / 
-          (Nadir_Reflectance_Band2 + 6 * Nadir_Reflectance_Band1 - 7.5 * Nadir_Reflectance_Band3 + 1)]
-  
-  modis[, evi2 := 2.5 * (Nadir_Reflectance_Band2 - Nadir_Reflectance_Band1) / 
-          (Nadir_Reflectance_Band2 + 2.4 * Nadir_Reflectance_Band1 + 1)]
+  modis_exist <- try({
+    modis <- fread(paste0(modis_data_dir, site, '_gee_subset.csv'))
+    modis[, ndvi := (Nadir_Reflectance_Band2 - Nadir_Reflectance_Band1) /
+            (Nadir_Reflectance_Band2 + Nadir_Reflectance_Band1)]
+    
+    modis[, evi := 2.5 * (Nadir_Reflectance_Band2 - Nadir_Reflectance_Band1) / 
+            (Nadir_Reflectance_Band2 + 6 * Nadir_Reflectance_Band1 - 7.5 * Nadir_Reflectance_Band3 + 1)]
+    
+    modis[, evi2 := 2.5 * (Nadir_Reflectance_Band2 - Nadir_Reflectance_Band1) / 
+            (Nadir_Reflectance_Band2 + 2.4 * Nadir_Reflectance_Band1 + 1)]
+  })
   
   write.csv(ndvi_stats, file = paste0(stats_data_dir, roi_name, '_ndvi_roistats.csv'), row.names = FALSE)
   write.csv(ndvi_d1, file = paste0(summ_data_dir, roi_name, '_1day.csv'), row.names = FALSE)
