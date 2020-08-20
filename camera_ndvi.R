@@ -185,7 +185,7 @@ for(i in 1:n){
     axis(4, line = 6, col = 4, col.ticks = 4, col.axis = 4)
     
     plot(type='n', 1, 1, axes =F, xlab ='', ylab='')
-    legend('center', legend = c('Gcc-90', 'NDVI-50', 'EVI2-50'), bty= 'n', col = c(3,1,4), lty = c(1,1,2))
+    legend('center', legend = c('Gcc-90', paste0(c('NDVI-', 'EVI2-'), metric), bty= 'n', col = c(3,1,4), lty = c(1,1,2))
   }
 
   mtext(outer = T, text = roi_name)
