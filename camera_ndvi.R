@@ -98,7 +98,7 @@ for(i in 1:n){
   
   ndvi_stats <- try(get_ndvi(roi_name, cache = TRUE, qtl = 'mean'))
   
-  if(class(ndvi_stats)=='try-error') next()
+  if(class(ndvi_stats)[1]=='try-error') next()
   
   ndvi_stats[, year := year(datetime)]
   ndvi_stats[, d1 := yday(datetime)]
@@ -130,7 +130,7 @@ for(i in 1:n){
                             evi2_90 = quantile(EVI2_c, na.rm = T, probs = 0.90)),
                         .(year, doy = d3)]
   
-  modis_exist <- try({
+  x <- try({
     modis <- fread(paste0(modis_data_dir, site, '_gee_subset.csv'))
     modis[, ndvi := (Nadir_Reflectance_Band2 - Nadir_Reflectance_Band1) /
             (Nadir_Reflectance_Band2 + Nadir_Reflectance_Band1)]
@@ -142,8 +142,14 @@ for(i in 1:n){
             (Nadir_Reflectance_Band2 + 2.4 * Nadir_Reflectance_Band1 + 1)]
   })
   
+  
   write.csv(ndvi_stats, file = paste0(stats_data_dir, roi_name, '_ndvi_roistats.csv'), row.names = FALSE)
   write.csv(ndvi_d1, file = paste0(summ_data_dir, roi_name, '_1day.csv'), row.names = FALSE)
   write.csv(ndvi_d3, file = paste0(summ_data_dir, roi_name, '_3day.csv'), row.names = FALSE)
 }
+
+mapply(download.file, ir_rois$one_day_summary, paste0(summ_data_dir, basename(ir_rois$one_day_summary)))
+
+mapply(download.file, ir_rois$three_day_summary, paste0(summ_data_dir, basename(ir_rois$three_day_summary)))
+
 
