@@ -1,4 +1,5 @@
 library(RCurl)
+library(plotly)
 library(phenocamapi)
 library(data.table)
 
@@ -6,8 +7,10 @@ phenocam_url <- 'https://phenocam.sr.unh.edu/data/archive/'
 
 modis_data_dir<- 'data/modis_time_series/'
 stats_data_dir <- 'data/stats/'
+figs_data_dir <- 'data/figs/'
 summ_data_dir <- 'data/summ/'
 
+dir.create(figs_data_dir, showWarnings = FALSE)
 dir.create(stats_data_dir, showWarnings = FALSE)
 dir.create(summ_data_dir, showWarnings = FALSE)
 
@@ -90,6 +93,11 @@ ir_rois <- fread('data/ir_rois.csv')
 
 n <- nrow(ir_rois)
 
+# mapply(download.file, ir_rois$one_day_summary, paste0(summ_data_dir, basename(ir_rois$one_day_summary)))
+# 
+# mapply(download.file, ir_rois$three_day_summary, paste0(summ_data_dir, basename(ir_rois$three_day_summary)))
+
+
 for(i in 1:n){
   site <- ir_rois[i, site]
   roi_name <- ir_rois[i, roi_name]
@@ -99,6 +107,7 @@ for(i in 1:n){
   ndvi_stats <- try(get_ndvi(roi_name, cache = TRUE, qtl = 'mean'))
   
   if(class(ndvi_stats)[1]=='try-error') next()
+  if(nrow(ndvi_stats)==0) next()
   
   ndvi_stats[, year := year(datetime)]
   ndvi_stats[, d1 := yday(datetime)]
@@ -142,14 +151,43 @@ for(i in 1:n){
             (Nadir_Reflectance_Band2 + 2.4 * Nadir_Reflectance_Band1 + 1)]
   })
   
+  ndvi_d1[, date := as.Date(doy, origin = paste0(year -1 , '-12-31'))]
+  ndvi_d3[, date := as.Date(doy, origin = paste0(year -1 , '-12-31'))]
   
   write.csv(ndvi_stats, file = paste0(stats_data_dir, roi_name, '_ndvi_roistats.csv'), row.names = FALSE)
-  write.csv(ndvi_d1, file = paste0(summ_data_dir, roi_name, '_1day.csv'), row.names = FALSE)
-  write.csv(ndvi_d3, file = paste0(summ_data_dir, roi_name, '_3day.csv'), row.names = FALSE)
+  write.csv(ndvi_d1, file = paste0(summ_data_dir, roi_name, '_ndvi_1day.csv'), row.names = FALSE)
+  write.csv(ndvi_d3, file = paste0(summ_data_dir, roi_name, '_ndvi_3day.csv'), row.names = FALSE)
+  
+  gcc_d1 <- fread(paste0(summ_data_dir, roi_name, '_1day.csv'))
+  gcc_d3 <- fread(paste0(summ_data_dir, roi_name, '_3day.csv'))
+  
+  gcc_d1[, date := as.Date(date)]
+  gcc_d3[, date := as.Date(date)]
+  
+  
+  
+  svg(filename = paste0(figs_data_dir, roi_name, '.svg'), width = 8, height = 6)
+  layout(matrix(1:8, 4,2, byrow = T), widths = c(5,1))
+  par(mar=c(0,1,1,5), oma = c(3,0,2,0))
+  
+  xlim <- range(gcc_d3$date)
+  
+  for(metric in c('mean', '50', '75', '90')){
+    plot(gcc_d3$date, gcc_d3$gcc_90, type = 'l', col = 3, xlim = xlim, yaxt = 'n', xaxt = 'n')
+    
+    par(new = T)
+    plot(ndvi_d3$date, ndvi_d3[[paste0('ndvi_',metric)]], type = 'l', col = 1, xlim = xlim, yaxt = 'n', xaxt = 'n')
+    axis(4)
+    
+    par(new = T)
+    plot(ndvi_d3$date, ndvi_d3[[paste0('evi2_',metric)]], type = 'l', col = 4, lty=2, xlim = xlim, yaxt = 'n', xaxt = 'n')
+    axis(4)
+    
+    plot(type='n', 1, 1, axes =F)
+    legend('center', legend = c('Gcc-90', 'NDVI-50', 'EVI2-50'), bty= 'n', col = c(3,1,4), lty = c(1,1,2))
+  }
+
+  mtext(outer = T, text = roi_name)
+  dev.off()
 }
-
-mapply(download.file, ir_rois$one_day_summary, paste0(summ_data_dir, basename(ir_rois$one_day_summary)))
-
-mapply(download.file, ir_rois$three_day_summary, paste0(summ_data_dir, basename(ir_rois$three_day_summary)))
-
 
