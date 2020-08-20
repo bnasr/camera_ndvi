@@ -167,23 +167,24 @@ for(i in 1:n){
   
   
   svg(filename = paste0(figs_data_dir, roi_name, '.svg'), width = 8, height = 6)
-  layout(matrix(1:8, 4,2, byrow = T), widths = c(5,1))
-  par(mar=c(0,1,1,5), oma = c(3,0,2,0))
+  layout(matrix(1:8, 4,2, byrow = T), widths = c(5,3))
+  par(mar=c(0,4,1,6), oma = c(3,0,2,0))
   
   xlim <- range(gcc_d3$date)
   
   for(metric in c('mean', '50', '75', '90')){
-    plot(gcc_d3$date, gcc_d3$gcc_90, type = 'l', col = 3, xlim = xlim, yaxt = 'n', xaxt = 'n')
+    plot(gcc_d3$date, gcc_d3$gcc_90, type = 'l', col = 3, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='')
+    axis(2, line = 1, col = 3, col.ticks = 3, col.axis = 3)
     
     par(new = T)
-    plot(ndvi_d3$date, ndvi_d3[[paste0('ndvi_',metric)]], type = 'l', col = 1, xlim = xlim, yaxt = 'n', xaxt = 'n')
-    axis(4)
+    plot(ndvi_d3$date, ndvi_d3[[paste0('ndvi_',metric)]], type = 'l', col = 1, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='')
+    axis(4, line = 3, col = 1, col.ticks = 1, col.axis = 1)
     
     par(new = T)
-    plot(ndvi_d3$date, ndvi_d3[[paste0('evi2_',metric)]], type = 'l', col = 4, lty=2, xlim = xlim, yaxt = 'n', xaxt = 'n')
-    axis(4)
+    plot(ndvi_d3$date, ndvi_d3[[paste0('evi2_',metric)]], type = 'l', col = 4, lty=2, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='')
+    axis(4, line = 6, col = 4, col.ticks = 4, col.axis = 4)
     
-    plot(type='n', 1, 1, axes =F)
+    plot(type='n', 1, 1, axes =F, xlab ='', ylab='')
     legend('center', legend = c('Gcc-90', 'NDVI-50', 'EVI2-50'), bty= 'n', col = c(3,1,4), lty = c(1,1,2))
   }
 
