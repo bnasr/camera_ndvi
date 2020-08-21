@@ -113,13 +113,13 @@ for(qtl in c('5', '10', '25', '50', '75', '90', '95', 'mean')){
     # svg(filename = paste0(figs_data_dir, roi_name, '_', ifelse(qtl=='5','05',qtl),'.svg'), width = 8, height = 6)
     png(filename = paste0(figs_data_dir, roi_name, '_', ifelse(qtl=='5','05',qtl),'.png'), width = 12, height = 6, units = 'in', res = 600)
     layout(matrix(1:8, 4,2, byrow = T), widths = c(7,2))
-    par(mar=c(0,4,1,6), oma = c(5,0,2,0), bty ='n')
+    par(mar=c(0,0,0,6), oma = c(5,0,2,0), bty ='n')
     
     xlim <- range(gcc_d3$date)
     
     for(metric in c('mean', '50', '75', '90')){
       plot(gcc_d3$date, gcc_d3$gcc_90, type = 'l', col = 3, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='', lwd =2)
-      axis(2, line = 1, col = 3, col.ticks = 3, col.axis = 3)
+      axis(4, line = -1.5, col = 3, col.ticks = 3, col.axis = 3)
       
       par(new = T)
       plot(ndvi_d3$date, ndvi_d3[[paste0('ndvi_',metric)]], type = 'l', col = 1, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='', lwd = 2)
@@ -130,15 +130,15 @@ for(qtl in c('5', '10', '25', '50', '75', '90', '95', 'mean')){
       axis(4, line = 2.5, col = 4, col.ticks = 4, col.axis = 4)
       
       par(new = T)
-      plot(modis$date, modis$ndvi, type = 'l', col = 2, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='', lwd=2)
+      plot(modis$date, modis$ndvi, type = 'l', col = 2, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='', lwd=1)
       axis(4, line = 4.5, col = 2, col.ticks = 2, col.axis = 2)
       
       par(new = T)
-      plot(modis$date, modis$evi, type = 'l', col = 6, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='', lwd=2, ylim = quantile(modis$evi, probs = c(0.01, 0.99), na.rm = T))
+      plot(modis$date, modis$evi, type = 'l', col = 6, xlim = xlim, yaxt = 'n', xaxt = 'n', ylab ='', lwd=1, ylim = quantile(modis$evi, probs = c(0.01, 0.99), na.rm = T))
       # axis(4, line = 6.5, col = 6, col.ticks = 6, col.axis = 6)
       
       par(new = T)
-      plot(modis$date, modis$evi2, type = 'l', col = 7, xlim = xlim, yaxt = 'n', xaxt = ifelse(metric =='90','s','n'), ylab ='', lwd=2, ylim = quantile(modis$evi2, probs = c(0.01, 0.99), na.rm = T))
+      plot(modis$date, modis$evi2, type = 'l', col = 7, xlim = xlim, yaxt = 'n', xaxt = ifelse(metric =='90','s','n'), ylab ='', lwd=1, ylim = quantile(modis$evi2, probs = c(0.01, 0.99), na.rm = T))
       # axis(4, line = 8.5, col = 7, col.ticks = 7, col.axis = 7)
       
       plot(type='n', 1, 1, axes =F, xlab ='', ylab='')
