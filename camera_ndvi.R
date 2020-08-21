@@ -9,7 +9,7 @@ phenocam_url <- 'https://phenocam.sr.unh.edu/data/archive/'
 
 modis_data_dir<- 'data/modis_time_series/'
 stats_data_dir <- 'data/stats/'
-figs_data_dir <- 'data/figs/'
+figs_data_dir <- 'data/figs2/'
 summ_data_dir <- 'data/summ/'
 
 dir.create(figs_data_dir, showWarnings = FALSE)
@@ -110,8 +110,8 @@ for(qtl in c('5', '10', '25', '50', '75', '90', '95', 'mean')){
     
     
     
-    # svg(filename = paste0(figs_data_dir, roi_name, '_', ifelse(qtl=='5','05',qtl),'.svg'), width = 8, height = 6)
-    png(filename = paste0(figs_data_dir, roi_name, '_', ifelse(qtl=='5','05',qtl),'.png'), width = 12, height = 6, units = 'in', res = 600)
+    svg(filename = paste0(figs_data_dir, roi_name, '_', ifelse(qtl=='5','05',qtl),'.svg'), width = 12, height = 6)
+    # png(filename = paste0(figs_data_dir, roi_name, '_', ifelse(qtl=='5','05',qtl),'.png'), width = 12, height = 6, units = 'in', res = 600)
     layout(matrix(1:8, 4,2, byrow = T), widths = c(7,2))
     par(mar=c(0,0,0,6), oma = c(5,0,2,0), bty ='n')
     
